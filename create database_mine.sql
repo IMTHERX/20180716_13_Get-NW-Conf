@@ -102,4 +102,75 @@ CREATE OR REPLACE VIEW sales_amount as
     from sales;
 describe sales_amount;
 
--- 添加数据；
+
+-- 添加数据；(插入)
+INSERT INTO product
+VALUES
+(1,'E-ZIP','Zip','EVERYDAY','GREEN','Y',59.95),
+(2,'E-FLX','Flex','EVERYDAY','BLACK','N',99.95),
+(3,'A-BLZ','Blaze','ACTIVE','PURPLE','Y',199.95),
+(4,'P-SUG','Surge','PERFORMANCE','BLACK','Y',249.95);
+SELECT * from product;
+-- 更新
+UPDATE product 
+SET msrp = 99
+WHERE product_id = 1;
+-- 删除
+DELETE FROM product
+WHERE product_id = 1;
+
+-- 插入客户信息
+INSERT INTO client 
+VALUES
+(1,'FITBIT','ONLINE'),
+(2,'AMAZON','ONLINE'),
+(3,'BESTBUY','OFFLINE'),
+(4,'WALMART','OFFLINE');
+SELECT * from client;
+
+-- 插入销售信息
+DELETE from sales
+WHERE tran_id = 7;
+
+INSERT INTO sales 
+(tran_id, date, product_id, client_id, price, quantity)
+VALUES
+(1,'2016-6-1', 1, 1, 40, 10),
+(2,'2016-6-5', 1, 2, 30, 5),
+(3,'2016-6-8', 2, 1, 80, 8),
+(4,'2016-6-8', 2, 2, 70, 7),
+(5,'2016-6-13', 3, 2, 150, 5),
+(6,'2016-6-18', 3, 4, 150, 10),
+(7,'2016-6-20', 2, 4, 40, 15);
+SELECT * from sales WHERE tran_id=7;
+
+-- update sales
+UPDATE sales
+SET date = '2016-6-20', price = 200
+WHERE date = '2016-6-21' and tran_id = 7;
+-- 注意这里是2个限制跳线
+
+
+-- 创建shipping信息
+CREATE TABLE IF NOT EXISTS shapping(
+shapping_id INT NOT NULL AUTO_INCREMENT,
+tran_id INT NOT NULL, -- 查看哪个订单到了
+tracking_no INT,
+status ENUM('正在打包','已经发出','已经到达') DEFAULT '正在打包',
+arrive_date date NULL, -- 到达日期
+eta date, -- 预计到达日期
+PRIMARY KEY(shapping_id)
+);
+-- insert value
+INSERT INTO shapping
+VALUES
+(1,1,1,'正在打包','2018-6-20','2018-6-21'),
+(2,11,1,'已经发出','2018-6-25','2018-6-30'),
+(3,12,1,'正在打包',NULL,'2018-6-21'),
+(4,200,1,'已经到达',NULL,NULL);
+SELECT * from shapping;
+
+CONSTRAINT fk_tran_id FOREIGN KEY (tran_id)
+	REFERENCES sales(tran_id)
+	ON DELETE CASCADE
+    ON UPDATE CASCADE
